@@ -1,15 +1,15 @@
-# set.seed(5427395)
-# nObs = 100
-# x1minrange = 5
-# x1maxrange = 25
-# x1 = runif(nObs, x1minrange, x1maxrange)
-# e = rnorm(nObs, mean = 0, sd = 2.0)
-# y = 1.67 * x1 - 2.93 + e
-# df = data.frame(y, x1)
-# 
-# # ---
-# myfit <- lm(y~x1, df)
-#myfit
+set.seed(5427395)
+nObs = 100
+x1minrange = 5
+x1maxrange = 25
+x1 = runif(nObs, x1minrange, x1maxrange)
+e = rnorm(nObs, mean = 0, sd = 2.0)
+y = 1.67 * x1 - 2.93 + e
+df = data.frame(y, x1)
+
+# ---
+myfit <- lm(y~x1, df)
+myfit
 
 library(here)
 
