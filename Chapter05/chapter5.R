@@ -85,10 +85,15 @@ eneff_test_pp <- predict(eneff_pp, eneff_test)
 
 eneff_train_out_pp <- preProcess(eneff_train_outputs, method = 
                         c("range"))
+
+
+eneff_test_out_pp <- preProcess(eneff_test_outputs, method = 
+                                   c("range"))
+
 eneff_train_outputs_pp <- 
   predict(eneff_train_out_pp, eneff_train_outputs)
 eneff_test_outputs_pp <- 
-  predict(eneff_train_out_pp, eneff_test_outputs)
+  predict(eneff_test_out_pp, eneff_test_outputs)
 
 library("neuralnet")
 n <- names(eneff_data)
@@ -106,7 +111,7 @@ eneff_model <- neuralnet(f,
 test_predictions <- compute(eneff_model, eneff_test_pp)
 head(test_predictions$net.result)
 eneff_train_out_pp$ranges
-     heatLoad coolLoad
+    
 reverse_range_scale <- function(v, ranges) {
      return( (ranges[2] - ranges[1]) * v + ranges[1] )
  }
@@ -114,7 +119,9 @@ reverse_range_scale <- function(v, ranges) {
 # ---Next, we''ll use this to obtain the unscaled predicted outputs for our test set:
 output_ranges <- eneff_train_out_pp$ranges
 test_predictions_unscaled <- sapply(1:2, function(x) 
-  reverse_range_scale(test_predictions[,x], output_ranges[,x]))
+  reverse_range_scale(test_predictions$net.result[,x], output_ranges[,x]))
+
+test_predictions_unscaled[,1]
 
 mse <- function(y_p, y) {
   return(mean((y - y_p) ^ 2))
@@ -130,7 +137,7 @@ cor(test_predictions_unscaled[,2], eneff_test_outputs[,2])
 
 # ---
 
-glass <- read.csv("glass.data", header = FALSE)
+glass <- read.csv(paste0(here(),"/data/glass.data"), header = FALSE)
 names(glass) <- c("id", "RI", "Na", "Mg", "Al", "Si", "K", "Ca", 
                     "Ba", "Fe", "Type")
 glass$id <- NULL
