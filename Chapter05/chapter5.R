@@ -192,6 +192,10 @@ nnet_grid <- expand.grid(.decay = c(0.1, 0.01, 0.001, 0.0001),
                            .size = c(50, 100, 150, 200, 250))
 nnetfit <- train(Type ~ ., data = glass_train, method = "nnet", 
   maxit = 10000, tuneGrid = nnet_grid, trace = F, MaxNWts = 10000)
+
+
+#Handwritten letters classification :
+
 read_idx_image_data <- function(image_file_path) {
   con <- file(image_file_path, "rb")
   magic_number <- readBin(con, what = "integer", n = 1, size = 4, 
@@ -222,13 +226,12 @@ read_idx_label_data <- function(label_file_path) {
   close(con)
   return(label_data)
 }
-mnist_train <- read_idx_image_data("train-images-idx3-ubyte")
-mnist_train_labels <- read_idx_label_data("train-labels-idx1-
-                                            ubyte")
+mnist_train <- read_idx_image_data(paste0(here(),"/data/images/train-images.idx3-ubyte"))
+mnist_train_labels <- read_idx_label_data(paste0(here(),"/data/images/train-labels.idx1-ubyte"))
 str(mnist_train)
- int [1:60000, 1:784] 0 0 0 0 0 0 0 0 0 0 ...
+
 str(mnist_train_labels)
- int [1:60000] 5 0 4 1 9 2 1 3 1 4 ...
+
 mnist_input <- mnist_train / 255
 mnist_output <- as.factor(mnist_train_labels)
 
@@ -247,8 +250,8 @@ mnist_mlp <- mlp(mnist_norm$inputsTrain,
   mnist_norm$targetsTrain, size = 100, inputsTest = 
   mnist_norm$inputsTest, targetsTest = mnist_norm$targetsTest)
 proc.time() - start_time
-    user   system  elapsed 
- 2923.936    5.470 2927.415
+    
+ #2923.936    5.470 2927.415
 
 start_time <- proc.time()
 mnist_mlp2 <- mlp(mnist_norm$inputsTrain, 
@@ -261,11 +264,12 @@ mlp_class_test <-
   (0:9)[apply(mnist_mlp$fittedTestValues, 1, which.max)]
 mlp2_class_test <- 
   (0:9)[apply(mnist_mlp2$fittedTestValues, 1, which.max)]
-Now we can check the accuracy of our two models, as follows:
+#Now we can check the accuracy of our two models, as follows:
 mean(mnist_class_test == mlp_class_test)
  
 mean(mnist_class_test == mlp2_class_test)
 
 # ---
-confusionMatrix(mnist_class_test, mlp2_class_test)
+confusionMatrix(mnist_class_test, mlp_class_test)
 
+plotIterativeError(mnist_mlp)
